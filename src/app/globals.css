@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f7f7f8;
+  --fg: #18181b;
+  --card: #ffffff;
+  --border: #e4e4e7;
+  --muted: #71717a;
+  --accent: #0c8ce9;
+  --radius: 12px;
+}
+
+.theme-contrast {
+  --bg: #000000;
+  --fg: #ffffff;
+  --card: #111111;
+  --border: #333333;
+  --muted: #cccccc;
+  --accent: #66b3ff;
+}
+
+.theme-large {
+  font-size: 112%;
+}
+
+.theme-reduced-motion *,
+.theme-reduced-motion *::before,
+.theme-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-ink-200/80 bg-white shadow-soft;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-campus-500/40 disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-ink-950 text-white hover:bg-ink-800;
+  }
+  .btn-secondary {
+    @apply btn border border-ink-200 bg-white text-ink-800 hover:bg-ink-50;
+  }
+  .btn-ghost {
+    @apply btn text-ink-600 hover:bg-ink-100 hover:text-ink-950;
+  }
+  .input {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-950 placeholder:text-ink-400
+      shadow-soft outline-none transition focus:border-campus-400 focus:ring-4 focus:ring-campus-500/10;
+  }
+  .label-muted {
+    @apply text-xs font-medium uppercase tracking-wider text-ink-400;
+  }
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight text-ink-950 sm:text-3xl;
+  }
+  .page-sub {
+    @apply mt-1 text-sm text-ink-500;
+  }
+}
+
+/* Route animation along SVG path */
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.route-path {
+  stroke-dasharray: 8 6;
+  animation: dash-flow 1.2s ease forwards;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.7; }
+}
+.nav-pulse {
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}

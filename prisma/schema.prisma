@@ -1,0 +1,585 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model University {
+  id           String   @id @default(cuid())
+  name         String
+  shortName    String?
+  address      String
+  city         String?
+  state        String?
+  country      String   @default("India")
+  pincode      String?
+  website      String?
+  description  String?
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL") // OFFICIAL | SECONDARY | USER
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(1.0)
+  status       String   @default("VERIFIED") // VERIFIED | UNVERIFIED | CONFLICT
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  schools      School[]
+  buildings    Building[]
+  people       Person[]
+  clubs        Club[]
+  events       Event[]
+  notices      Notice[]
+  researchCenters ResearchCenter[]
+  hostels      Hostel[]
+  services     Service[]
+  facilities   Facility[]
+  emergencyContacts EmergencyContact[]
+  pulseStatuses PulseStatus[]
+}
+
+model School {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  shortName    String?
+  description  String?
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(1.0)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  departments  Department[]
+  programmes   Programme[]
+  faculty      Person[]
+}
+
+model Department {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id])
+  description String?
+  sourceURL   String?
+  sourceTitle String?
+  sourceType  String   @default("OFFICIAL")
+  retrievedAt DateTime?
+  lastVerified DateTime?
+  confidence  Float    @default(1.0)
+  status      String   @default("VERIFIED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  programmes  Programme[]
+  courses     Course[]
+}
+
+model Programme {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  degree      String
+  duration    String?
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id])
+  departmentId String?
+  department  Department? @relation(fields: [departmentId], references: [id])
+  description String?
+  sourceURL   String?
+  sourceTitle String?
+  sourceType  String   @default("OFFICIAL")
+  retrievedAt DateTime?
+  lastVerified DateTime?
+  confidence  Float    @default(1.0)
+  status      String   @default("VERIFIED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  courses     Course[]
+  students    DemoStudent[]
+}
+
+model Course {
+  id           String   @id @default(cuid())
+  code         String
+  name         String
+  credits      Int?
+  semester     Int?
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  programmeId  String?
+  programme    Programme? @relation(fields: [programmeId], references: [id])
+  facultyId    String?
+  faculty      Person?  @relation(fields: [facultyId], references: [id])
+  roomId       String?
+  room         Room?    @relation(fields: [roomId], references: [id])
+  description  String?
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(1.0)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  timetableSlots TimetableSlot[]
+  exams        Exam[]
+}
+
+model Person {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  role         String   // FACULTY | STAFF | LEADERSHIP
+  title        String?
+  designation  String?
+  email        String?
+  bio          String?
+  schoolId     String?
+  school       School?  @relation(fields: [schoolId], references: [id])
+  universityId String?
+  university   University? @relation(fields: [universityId], references: [id])
+  officeRoomId String?
+  officeRoom   Room?    @relation(fields: [officeRoomId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(1.0)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  courses      Course[]
+}
+
+model Building {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  code         String?
+  description  String?
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  nodeId       String?  @unique
+  node         CampusNode? @relation(fields: [nodeId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(1.0)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  rooms        Room[]
+  facilities   Facility[]
+  hostels      Hostel[]
+}
+
+model Room {
+  id          String   @id @default(cuid())
+  name        String
+  code        String?
+  floor       String?
+  capacity    Int?
+  type        String?  // CLASSROOM | LAB | OFFICE | HALL | OTHER
+  buildingId  String
+  building    Building @relation(fields: [buildingId], references: [id])
+  sourceURL   String?
+  sourceTitle String?
+  sourceType  String   @default("OFFICIAL")
+  retrievedAt DateTime?
+  lastVerified DateTime?
+  confidence  Float    @default(1.0)
+  status      String   @default("VERIFIED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  courses     Course[]
+  faculty     Person[]
+  labs        Laboratory[]
+  timetableSlots TimetableSlot[]
+  exams       Exam[]
+}
+
+model Facility {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  type         String   // FOOD | SPORTS | LIBRARY | MEDICAL | OTHER
+  description  String?
+  hours        String?
+  buildingId   String?
+  building     Building? @relation(fields: [buildingId], references: [id])
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  nodeId       String?
+  node         CampusNode? @relation(fields: [nodeId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(1.0)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Club {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  category     String
+  description  String?
+  meetingInfo  String?
+  tags         String?  // JSON array as string
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.8)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  events       Event[]
+}
+
+model Event {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String?
+  startAt      DateTime
+  endAt        DateTime?
+  location     String?
+  venueNodeId  String?
+  venueNode    CampusNode? @relation(fields: [venueNodeId], references: [id])
+  clubId       String?
+  club         Club?    @relation(fields: [clubId], references: [id])
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.9)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Notice {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  body         String
+  category     String   @default("GENERAL")
+  publishedAt  DateTime @default(now())
+  previousBody String?
+  changeSummary String?
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(1.0)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ResearchCenter {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String?
+  focus        String?
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.8)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  laboratories Laboratory[]
+}
+
+model Laboratory {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  description      String?
+  roomId           String?
+  room             Room?    @relation(fields: [roomId], references: [id])
+  researchCenterId String?
+  researchCenter   ResearchCenter? @relation(fields: [researchCenterId], references: [id])
+  sourceURL        String?
+  sourceTitle      String?
+  sourceType       String   @default("OFFICIAL")
+  retrievedAt      DateTime?
+  lastVerified     DateTime?
+  confidence       Float    @default(0.8)
+  status           String   @default("VERIFIED")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model LibraryResource {
+  id           String   @id @default(cuid())
+  title        String
+  type         String   // DATABASE | JOURNAL | EBOOK | GUIDE | LINK
+  url          String
+  description  String?
+  provider     String?
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.9)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Hostel {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  type         String   // BOYS | GIRLS | OTHER
+  description  String?
+  capacity     Int?
+  buildingId   String?
+  building     Building? @relation(fields: [buildingId], references: [id])
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.8)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Service {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  category     String
+  description  String?
+  howToAccess  String?
+  hours        String?
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.8)
+  status       String   @default("VERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CampusNode {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  kind        String   // BUILDING | GATE | JUNCTION | FACILITY | LANDMARK
+  x           Float    // relative SVG coordinates (0-1000)
+  y           Float
+  label       String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  building    Building?
+  facilities  Facility[]
+  events      Event[]
+  edgesFrom   CampusEdge[] @relation("EdgeFrom")
+  edgesTo     CampusEdge[] @relation("EdgeTo")
+  routesFrom  Route[] @relation("RouteFrom")
+  routesTo    Route[] @relation("RouteTo")
+}
+
+model CampusEdge {
+  id          String   @id @default(cuid())
+  fromNodeId  String
+  toNodeId    String
+  fromNode    CampusNode @relation("EdgeFrom", fields: [fromNodeId], references: [id])
+  toNode      CampusNode @relation("EdgeTo", fields: [toNodeId], references: [id])
+  bidirectional Boolean @default(true)
+  weight      Float    @default(1) // relative hop weight, NOT meters/GPS
+  label       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([fromNodeId, toNodeId])
+}
+
+model Route {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  fromNodeId  String
+  toNodeId    String
+  fromNode    CampusNode @relation("RouteFrom", fields: [fromNodeId], references: [id])
+  toNode      CampusNode @relation("RouteTo", fields: [toNodeId], references: [id])
+  pathNodeIds String   // JSON array of node IDs in order
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmergencyContact {
+  id           String   @id @default(cuid())
+  label        String
+  description  String?
+  contactHint  String?  // e.g. "Contact campus security desk" — no invented numbers
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("OFFICIAL")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.7)
+  status       String   @default("UNVERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model PulseStatus {
+  id           String   @id @default(cuid())
+  area         String
+  status       String   // OPEN | LIMITED | CLOSED | INFO
+  message      String
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+  updatedBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model DemoStudent {
+  id          String   @id @default(cuid())
+  name        String
+  programmeId String
+  programme   Programme @relation(fields: [programmeId], references: [id])
+  year        Int
+  semester    Int
+  fictional   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  timetableSlots TimetableSlot[]
+  exams       Exam[]
+  favorites   Favorite[]
+}
+
+model TimetableSlot {
+  id        String   @id @default(cuid())
+  dayOfWeek Int      // 0=Sun .. 6=Sat
+  startTime String   // "09:00"
+  endTime   String   // "10:00"
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  roomId    String?
+  room      Room?    @relation(fields: [roomId], references: [id])
+  studentId String?
+  student   DemoStudent? @relation(fields: [studentId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Exam {
+  id        String   @id @default(cuid())
+  title     String
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  startsAt  DateTime
+  endsAt    DateTime?
+  roomId    String?
+  room      Room?    @relation(fields: [roomId], references: [id])
+  studentId String?
+  student   DemoStudent? @relation(fields: [studentId], references: [id])
+  // No grades — intentionally omitted
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IdeaSubmission {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String?
+  submitterName String @default("Anonymous")
+  status      String  @default("RECEIVED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  studentId String
+  student   DemoStudent @relation(fields: [studentId], references: [id])
+  itemType  String
+  itemId    String
+  label     String?
+  createdAt DateTime @default(now())
+
+  @@unique([studentId, itemType, itemId])
+}
+
+model NotificationPref {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  enabled   Boolean  @default(true)
+  label     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GlobalClaim {
+  id           String   @id @default(cuid())
+  title        String
+  claim        String
+  sourceURL    String?
+  sourceTitle  String?
+  sourceType   String   @default("SECONDARY")
+  retrievedAt  DateTime?
+  lastVerified DateTime?
+  confidence   Float    @default(0.6)
+  status       String   @default("UNVERIFIED")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AdminSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
