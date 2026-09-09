@@ -8,7 +8,7 @@ import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <AccessibilityProvider>
-      <div className="flex min-h-screen bg-[var(--bg)] text-[var(--fg)]">
+      <div className="flex min-h-screen bg-campus-mesh bg-[var(--bg)] text-[var(--fg)]">
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <TopBar />

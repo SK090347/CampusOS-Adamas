@@ -1,7 +1,9 @@
 import prisma from "@/lib/prisma";
-import { SourceBadge } from "@/components/ui/SourceBadge";
-import { ExternalLink } from "lucide-react";
+import { OfficialPanel } from "@/components/content/OfficialPanel";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Badge } from "@/components/ui/Badge";
 import Link from "next/link";
+import { MapPin } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -10,41 +12,65 @@ export default async function LibraryPage() {
     prisma.libraryResource.findMany({ orderBy: { title: "asc" } }),
     prisma.facility.findFirst({ where: { type: "LIBRARY" }, include: { node: true } }),
   ]);
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="page-title">Library</h1>
-        <p className="page-sub">Link-out resources and campus library info. External sites open in a new tab.</p>
+        <p className="label-muted">Learn</p>
+        <h1 className="page-title mt-1">Library</h1>
+        <p className="page-sub max-w-2xl">
+          In-app resource panels with official-source attribution. Embeds open only for allowlisted
+          HTTPS sites — CampusOS never bypasses logins or scrapes behind authentication.
+        </p>
       </div>
+
       {facility && (
-        <div className="card p-5">
-          <h2 className="text-sm font-semibold">{facility.name}</h2>
-          <p className="mt-1 text-sm text-ink-600">{facility.description}</p>
-          {facility.hours && <p className="mt-2 text-xs text-ink-500">Hours: {facility.hours}</p>}
-          <SourceBadge {...facility} />
+        <div className="card flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="font-display text-lg font-semibold text-ink-950">{facility.name}</h2>
+            <p className="text-sm text-ink-500">{facility.description}</p>
+            {facility.hours && (
+              <p className="mt-1 text-xs font-medium text-campus-800">Hours: {facility.hours}</p>
+            )}
+          </div>
           {facility.node && (
-            <Link href={`/map?to=${facility.node.slug}&from=main-gate`} className="btn-secondary mt-3 inline-flex text-xs">
-              Walk to library
+            <Link
+              href={`/map?to=${facility.node.slug}&from=main-gate`}
+              className="btn-primary text-xs"
+            >
+              <MapPin className="h-3.5 w-3.5" /> Walk to library
             </Link>
           )}
         </div>
       )}
-      <ul className="card divide-y divide-ink-100">
-        {resources.map((r) => (
-          <li key={r.id} className="px-4 py-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-[11px] uppercase tracking-wide text-ink-400">{r.type}</div>
-                <a href={r.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-950 hover:text-campus-700">
-                  {r.title} <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-                {r.description && <p className="mt-1 text-xs text-ink-500">{r.description}</p>}
-                <div className="mt-2"><SourceBadge {...r} compact /></div>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+
+      {resources.length === 0 ? (
+        <EmptyState title="No library resources seeded" description="Admins can add resources later." />
+      ) : (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {Array.from(new Set(resources.map((r) => r.type))).map((t) => (
+              <Badge key={t} tone="gold">
+                {t}
+              </Badge>
+            ))}
+          </div>
+          {resources.map((r) => (
+            <OfficialPanel
+              key={r.id}
+              title={r.title}
+              summary={r.description}
+              url={r.url}
+              provider={r.provider}
+              sourceType={r.sourceType}
+              sourceTitle={r.sourceTitle}
+              sourceURL={r.sourceURL || r.url}
+              confidence={r.confidence}
+              status={r.status}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

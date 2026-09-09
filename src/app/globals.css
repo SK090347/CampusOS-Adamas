@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --bg: #f7f7f8;
-  --fg: #18181b;
-  --card: #ffffff;
-  --border: #e4e4e7;
-  --muted: #71717a;
-  --accent: #0c8ce9;
-  --radius: 12px;
+  --bg: #f7f1e5;
+  --fg: #12100e;
+  --card: #fffcf7;
+  --border: #e5ddd0;
+  --muted: #7a7162;
+  --accent: #c4a35a;
+  --radius: 14px;
 }
 
 .theme-contrast {
@@ -18,7 +18,7 @@
   --card: #111111;
   --border: #333333;
   --muted: #cccccc;
-  --accent: #66b3ff;
+  --accent: #e0c878;
 }
 
 .theme-large {
@@ -47,41 +47,61 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-xl border border-ink-200/80 bg-white shadow-soft;
+    @apply rounded-xl border border-ink-200/70 bg-[var(--card)] shadow-soft;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-campus-500/40 disabled:opacity-50;
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-campus-500/50 disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-ink-950 text-white hover:bg-ink-800;
+    @apply btn bg-ink-950 text-cream hover:bg-ink-800;
   }
   .btn-secondary {
-    @apply btn border border-ink-200 bg-white text-ink-800 hover:bg-ink-50;
+    @apply btn border border-ink-200 bg-white text-ink-800 hover:border-campus-300 hover:bg-campus-50;
   }
   .btn-ghost {
-    @apply btn text-ink-600 hover:bg-ink-100 hover:text-ink-950;
+    @apply btn text-ink-600 hover:bg-ink-100/80 hover:text-ink-950;
+  }
+  .btn-gold {
+    @apply btn bg-campus-500 text-ink-950 hover:bg-campus-400;
   }
   .input {
     @apply w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-950 placeholder:text-ink-400
-      shadow-soft outline-none transition focus:border-campus-400 focus:ring-4 focus:ring-campus-500/10;
+      shadow-soft outline-none transition focus:border-campus-400 focus:ring-4 focus:ring-campus-500/15;
   }
   .label-muted {
-    @apply text-xs font-medium uppercase tracking-wider text-ink-400;
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400;
   }
   .page-title {
-    @apply text-2xl font-semibold tracking-tight text-ink-950 sm:text-3xl;
+    @apply font-display text-2xl font-semibold tracking-tight text-ink-950 sm:text-3xl;
   }
   .page-sub {
-    @apply mt-1 text-sm text-ink-500;
+    @apply mt-1.5 text-sm leading-relaxed text-ink-500;
+  }
+  .section-title {
+    @apply font-display text-lg font-semibold tracking-tight text-ink-950;
+  }
+  .gold-rule {
+    @apply h-px w-12 bg-gradient-to-r from-campus-500 to-transparent;
   }
 }
 
-/* Route animation along SVG path */
+.leaflet-container {
+  font: inherit;
+  background: #efe6d4;
+  z-index: 0;
+}
+.leaflet-control-attribution {
+  font-size: 10px !important;
+  background: rgba(255, 252, 247, 0.92) !important;
+}
+.campus-marker-pin {
+  background: transparent !important;
+  border: none !important;
+}
+
 @keyframes dash-flow {
-  to {
-    stroke-dashoffset: 0;
-  }
+  to { stroke-dashoffset: 0; }
 }
 .route-path {
   stroke-dasharray: 8 6;
@@ -94,4 +114,12 @@ body {
 }
 .nav-pulse {
   animation: pulse-dot 1.4s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fade-up 0.35s ease-out both;
 }

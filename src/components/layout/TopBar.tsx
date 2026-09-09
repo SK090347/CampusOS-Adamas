@@ -32,14 +32,14 @@ export function TopBar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-200/80 bg-white/90 px-4 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-200/70 bg-[var(--card)]/90 px-4 backdrop-blur-md sm:px-6">
       <div className="lg:hidden">
-        <Link href="/" className="text-sm font-semibold tracking-tight text-ink-950">
+        <Link href="/" className="font-display text-sm font-semibold tracking-tight text-ink-950">
           CampusOS
         </Link>
       </div>
-      <div className="hidden text-xs text-ink-400 lg:block">
-        Adamas Knowledge City · Kolkata
+      <div className="hidden text-xs text-ink-500 lg:block">
+        Adamas Knowledge City · Barasat–Barrackpore Road · Kolkata 700126
       </div>
       <div className="flex items-center gap-2">
         {session ? (
@@ -47,8 +47,13 @@ export function TopBar() {
             <span className="hidden text-xs text-ink-600 sm:inline">
               {session.name}
               {session.role === "admin" && (
-                <span className="ml-1 rounded bg-ink-950 px-1.5 py-0.5 text-[10px] text-white">
+                <span className="ml-1 rounded bg-campus-500 px-1.5 py-0.5 text-[10px] font-semibold text-ink-950">
                   Admin
+                </span>
+              )}
+              {session.role === "student" && (
+                <span className="ml-1 rounded bg-ink-100 px-1.5 py-0.5 text-[10px] text-ink-600">
+                  Demo · fictional
                 </span>
               )}
             </span>

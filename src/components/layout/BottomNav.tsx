@@ -8,7 +8,10 @@ import { cn } from "@/lib/utils";
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-200/80 bg-white/95 backdrop-blur lg:hidden">
+    <nav
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-ink-200/80 bg-[var(--card)]/95 backdrop-blur-md lg:hidden"
+      aria-label="Mobile"
+    >
       <ul className="mx-auto flex max-w-lg items-stretch justify-between px-2 pb-[env(safe-area-inset-bottom)]">
         {mobileNav.map((item) => {
           const active =
@@ -16,12 +19,9 @@ export function BottomNav() {
               ? pathname === "/"
               : item.href === "/more"
                 ? pathname === "/more" ||
-                  ![
-                    "/",
-                    "/map",
-                    "/academics",
-                    "/events",
-                  ].some((p) => pathname === p || (p !== "/" && pathname.startsWith(p)))
+                  !["/", "/map", "/academics", "/events"].some(
+                    (p) => pathname === p || (p !== "/" && pathname.startsWith(p))
+                  )
                 : pathname.startsWith(item.href);
           const Icon = item.icon;
           return (
@@ -33,7 +33,14 @@ export function BottomNav() {
                   active ? "text-ink-950" : "text-ink-400"
                 )}
               >
-                <Icon className={cn("h-5 w-5", active && "stroke-[2.25]")} />
+                <span
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full",
+                    active && "bg-campus-100 text-campus-800"
+                  )}
+                >
+                  <Icon className={cn("h-5 w-5", active && "stroke-[2.25]")} />
+                </span>
                 {item.label}
               </Link>
             </li>

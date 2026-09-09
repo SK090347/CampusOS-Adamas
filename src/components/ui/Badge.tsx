@@ -6,16 +6,17 @@ export function Badge({
   className,
 }: {
   children: React.ReactNode;
-  tone?: "neutral" | "blue" | "amber" | "green" | "red" | "violet";
+  tone?: "neutral" | "blue" | "amber" | "green" | "red" | "violet" | "gold";
   className?: string;
 }) {
   const tones = {
     neutral: "bg-ink-100 text-ink-700",
-    blue: "bg-campus-50 text-campus-800",
-    amber: "bg-amber-50 text-amber-800",
-    green: "bg-emerald-50 text-emerald-800",
-    red: "bg-red-50 text-red-800",
-    violet: "bg-violet-50 text-violet-800",
+    blue: "bg-campus-50 text-campus-900",
+    amber: "bg-amber-50 text-amber-900",
+    green: "bg-emerald-50 text-emerald-900",
+    red: "bg-red-50 text-red-900",
+    violet: "bg-violet-50 text-violet-900",
+    gold: "bg-campus-100 text-campus-900",
   };
   return (
     <span

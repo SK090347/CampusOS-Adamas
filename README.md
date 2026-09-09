@@ -1,4 +1,4 @@
-# CampusOS — Adamas University
+# CampusOS — Adamas University (v2)
 
 **Everything around your university, one intelligent operating layer.**
 
@@ -11,7 +11,8 @@ Core flow: **SEARCH → UNDERSTAND → NAVIGATE → ACT**
 - Next.js 14 (App Router) + TypeScript + Tailwind CSS
 - SQLite + Prisma (seeded demo data)
 - Demo student auth + password-gated admin CMS
-- Topology campus map (SVG) — relative layout, **no fabricated GPS/distances**
+- **Leaflet + OpenStreetMap** interactive map with topology routing overlay
+- Approximate campus overlay coordinates — **admin-editable / not official survey GPS**
 
 ## Quick start
 
@@ -20,7 +21,7 @@ cp .env.example .env
 npm install
 npm run db:push
 npm run db:seed
-npm run dev
+npm run dev -- -H 0.0.0.0 -p 3000
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
@@ -29,7 +30,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
 npm run build
-npm start
+npm start -- -H 0.0.0.0 -p 3000
 ```
 
 ### Reset database
@@ -43,15 +44,18 @@ npm run db:reset
 | Role | How |
 |------|-----|
 | Demo student | Click **Demo as Aarav** (fictional: Aarav Sen, B.Tech CSE — AI & ML) |
-| Admin | `/admin` with `ADMIN_PASSWORD` from `.env` (default in `.env.example`) |
+| Admin | `/admin` with `ADMIN_PASSWORD` from `.env` |
 
 Secrets live only in environment variables — never hardcode production secrets.
 
-## Demo flow
+## Map (v2)
 
-1. Home → search **“Where is my AI class?”**
-2. Open the AI course card
-3. **Navigate to class** → map animates topology route (Main Gate → Plaza → SOET)
+- Primary map: **Leaflet** with **OpenStreetMap** tiles
+- Nodes carry relative layout (`x`, `y`) plus optional approximate `lat` / `lng`
+- Edges carry **relative hop weights** (not metres)
+- Routes are Dijkstra over `CampusNode` / `CampusEdge`
+- UI banner: *Approximate campus overlay — admin-editable / not official survey GPS*
+- Google Maps is **not** used or required
 
 ## Knowledge layer
 
@@ -59,21 +63,13 @@ Institutional records include: `sourceURL`, `sourceTitle`, `sourceType`, `retrie
 
 - **OFFICIAL** vs **SECONDARY** are labelled in UI
 - Secondary sources are **never** presented as official policy
-- Conflicts surface as **“Information discrepancy detected”** with sources
-
-## Map principles
-
-- Nodes use relative SVG coordinates (`x`, `y` in a 0–1000 / 0–800 viewBox)
-- Edges carry **relative hop weights** (not metres)
-- Routes are Dijkstra over `CampusNode` / `CampusEdge` only
-- Admins can add/edit nodes and edges in Admin CMS
+- Conflicts surface as **Information discrepancy detected**
 
 ## Modules
 
-Home · Map · Campus Pulse · Academic OS · Academic Universe (10 schools) · People OS · Clubs (15 + quiz) · Events · Notices (What changed?) · Exams (no fake grades) · Library · Hostel · Food · Sports/Wellness · Research · Innovation (Submit Idea) · Career (non-official heuristic) · Global Adamas · Service Hub · AURA · My Campus · Notifications · Safety · Accessibility · Onboarding · Admin CMS
+Home · Map · Campus Pulse · Academic OS · Academic Universe (10 schools) · People OS · Clubs (15 + quiz) · Events · Notices (What changed?) · Exams (no fake grades) · Library (in-app panels) · Hostel · Food · Sports/Wellness · Research · Innovation · Career · Global Adamas · Service Hub · AURA · My Campus · Notifications · Safety · Accessibility · Onboarding · Admin CMS
 
-Mobile bottom nav: **Home | Map | Academics | Events | More**  
-Desktop: sidebar layout
+Mobile bottom nav: **Home | Map | Academics | Events | More**
 
 ## Leadership (seeded with sources)
 
@@ -81,16 +77,6 @@ Desktop: sidebar layout
 - Prof. (Dr.) Naveen Das — Vice Chancellor (Officiating)
 
 Source: Adamas University official website references in seed metadata.
-
-## Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `npm run dev` | Development server |
-| `npm run build` | Prisma generate + Next production build |
-| `npm run db:push` | Sync Prisma schema to SQLite |
-| `npm run db:seed` | Seed demo data |
-| `npm run db:reset` | Force reset DB + seed |
 
 ## Licence
 

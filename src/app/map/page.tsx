@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import prisma from "@/lib/prisma";
 import { MapClient } from "./MapClient";
 import { LoadingBlock } from "@/components/ui/EmptyState";
+import { MAP_DISCLAIMER } from "@/lib/geo";
 
 export const dynamic = "force-dynamic";
 
@@ -14,18 +15,16 @@ export default async function MapPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="page-title">Digital Campus Map</h1>
-        <p className="page-sub">
-          Editable relative layout. Routes computed only from CampusNode / CampusEdge topology —
-          never GPS or invented metres.
+        <p className="label-muted">Navigation</p>
+        <h1 className="page-title mt-1">Campus map</h1>
+        <p className="page-sub max-w-2xl">
+          Interactive OpenStreetMap view of Adamas Knowledge City with an admin-editable topology
+          overlay. Routes use CampusNode / CampusEdge hop weights — never invented metre distances.
+          {` ${MAP_DISCLAIMER}.`}
         </p>
       </div>
       <Suspense fallback={<LoadingBlock label="Loading map…" />}>
-        <MapClient
-          nodes={nodes}
-          edges={edges}
-          defaultFromSlug="main-gate"
-        />
+        <MapClient nodes={nodes} edges={edges} defaultFromSlug="main-gate" />
       </Suspense>
     </div>
   );

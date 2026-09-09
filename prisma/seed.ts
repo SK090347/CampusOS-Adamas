@@ -12,17 +12,28 @@ const OFFICIAL = {
   status: "VERIFIED" as const,
 };
 
+
+/** Approximate overlay centroid — Adamas Knowledge City (Jagannathpur). NOT official survey GPS. */
+const CENTROID = { lat: 22.7412, lng: 88.4528 };
+const SPAN = { lat: 0.0048, lng: 0.0056 };
+function approxLatLng(x: number, y: number) {
+  return {
+    lat: CENTROID.lat + SPAN.lat / 2 - (y / 800) * SPAN.lat,
+    lng: CENTROID.lng - SPAN.lng / 2 + (x / 1000) * SPAN.lng,
+  };
+}
+
 const SCHOOLS = [
-  { name: "School of Engineering and Technology", slug: "soet", shortName: "SOET" },
-  { name: "School of Basic and Applied Sciences", slug: "sbas", shortName: "SBAS" },
-  { name: "School of Liberal Arts and Culture Studies", slug: "slacs", shortName: "SLACS" },
-  { name: "School of Business", slug: "sob", shortName: "SOB" },
-  { name: "School of Law and Justice", slug: "solj", shortName: "SOLJ" },
-  { name: "School of Media and Communication", slug: "somc", shortName: "SOMC" },
-  { name: "School of Education", slug: "soe", shortName: "SOE" },
-  { name: "School of Life Science and Biotechnology", slug: "slsb", shortName: "SLSB" },
-  { name: "School of Health and Medical Sciences", slug: "shms", shortName: "SHMS" },
-  { name: "School of Smart Agriculture", slug: "ssa", shortName: "SSA" },
+  { name: "School of Engineering and Technology", slug: "soet", shortName: "SOET", blurb: "Undergraduate and postgraduate programmes in CSE, AI/ML, ECE, ME, CE and applied engineering — labs, projects, and industry-aligned curricula." },
+  { name: "School of Basic and Applied Sciences", slug: "sbas", shortName: "SBAS", blurb: "Physics, chemistry, mathematics, and applied science foundations supporting research and cross-school teaching." },
+  { name: "School of Liberal Arts and Culture Studies", slug: "slacs", shortName: "SLACS", blurb: "Humanities, languages, culture studies, and interdisciplinary liberal arts for critical thinking and civic engagement." },
+  { name: "School of Business", slug: "sob", shortName: "SOB", blurb: "Management, commerce, and entrepreneurship programmes with industry interface and career readiness support." },
+  { name: "School of Law and Justice", slug: "solj", shortName: "SOLJ", blurb: "Legal education spanning constitutional, corporate, and justice-oriented programmes with moot and clinic exposure." },
+  { name: "School of Media and Communication", slug: "somc", shortName: "SOMC", blurb: "Journalism, media production, and communication studies with studio and digital storytelling practice." },
+  { name: "School of Education", slug: "soe", shortName: "SOE", blurb: "Teacher education and pedagogy programmes preparing educators for contemporary classrooms." },
+  { name: "School of Life Science and Biotechnology", slug: "slsb", shortName: "SLSB", blurb: "Life sciences and biotechnology teaching and research spanning molecular biology to applied biotech." },
+  { name: "School of Health and Medical Sciences", slug: "shms", shortName: "SHMS", blurb: "Health-allied and medical sciences education with clinical orientation and community health focus." },
+  { name: "School of Smart Agriculture", slug: "ssa", shortName: "SSA", blurb: "Agriculture and agri-tech programmes emphasising sustainable and smart farming practices." },
 ];
 
 const CLUBS = [
@@ -97,25 +108,32 @@ async function main() {
     },
   });
 
-  // —— Campus nodes (relative SVG layout 0–1000; topology only, no GPS) ——
+  // —— Campus nodes (relative layout + approximate lat/lng overlay; NOT official survey GPS) ——
   const nodes = await Promise.all(
     [
-      { name: "Main Gate", slug: "main-gate", kind: "GATE", x: 80, y: 520, label: "Main Gate" },
-      { name: "Central Plaza", slug: "central-plaza", kind: "JUNCTION", x: 280, y: 480, label: "Plaza" },
-      { name: "SOET Block", slug: "soet-block", kind: "BUILDING", x: 420, y: 320, label: "SOET" },
-      { name: "Science Block", slug: "science-block", kind: "BUILDING", x: 560, y: 280, label: "Sciences" },
-      { name: "Business & Law", slug: "business-law", kind: "BUILDING", x: 480, y: 520, label: "SOB / SOLJ" },
-      { name: "Library", slug: "library-node", kind: "FACILITY", x: 360, y: 420, label: "Library" },
-      { name: "Admin Block", slug: "admin-block", kind: "BUILDING", x: 220, y: 360, label: "Admin" },
-      { name: "Hostel Zone", slug: "hostel-zone", kind: "LANDMARK", x: 700, y: 560, label: "Hostels" },
-      { name: "Food Court", slug: "food-court", kind: "FACILITY", x: 340, y: 600, label: "Food" },
-      { name: "Sports Complex", slug: "sports-complex", kind: "FACILITY", x: 620, y: 680, label: "Sports" },
-      { name: "Media & Arts", slug: "media-arts", kind: "BUILDING", x: 180, y: 620, label: "Media / Arts" },
-      { name: "Life Sciences", slug: "life-sciences", kind: "BUILDING", x: 680, y: 360, label: "SLSB" },
-      { name: "Health Sciences", slug: "health-sciences", kind: "BUILDING", x: 780, y: 440, label: "SHMS" },
-      { name: "Agriculture Hub", slug: "agri-hub", kind: "BUILDING", x: 820, y: 280, label: "SSA" },
-      { name: "Innovation Hub", slug: "innovation-hub", kind: "FACILITY", x: 500, y: 400, label: "Innovation" },
-    ].map((n) => prisma.campusNode.create({ data: n }))
+      { name: "Main Gate", slug: "main-gate", kind: "GATE", x: 80, y: 520, label: "Main Gate", description: "Primary campus entry on Barasat–Barrackpore Road approach." },
+      { name: "East Gate", slug: "east-gate", kind: "GATE", x: 900, y: 500, label: "East Gate", description: "Secondary / service approach (approximate overlay)." },
+      { name: "Central Plaza", slug: "central-plaza", kind: "JUNCTION", x: 280, y: 480, label: "Plaza", description: "Central gathering and wayfinding hub." },
+      { name: "North Walk Junction", slug: "north-walk", kind: "JUNCTION", x: 450, y: 240, label: "North Walk", description: "Connector toward science and agri zones." },
+      { name: "SOET Block", slug: "soet-block", kind: "BUILDING", x: 420, y: 320, label: "SOET", description: "School of Engineering and Technology — classrooms, labs, faculty offices." },
+      { name: "Science Block", slug: "science-block", kind: "BUILDING", x: 560, y: 280, label: "Sciences", description: "Basic and applied sciences teaching block." },
+      { name: "Business & Law", slug: "business-law", kind: "BUILDING", x: 480, y: 520, label: "SOB / SOLJ", description: "Business and Law complex." },
+      { name: "Library", slug: "library-node", kind: "FACILITY", x: 360, y: 420, label: "Library", description: "Central Library — reading rooms and digital resources." },
+      { name: "Admin Block", slug: "admin-block", kind: "BUILDING", x: 220, y: 360, label: "Admin", description: "Administrative offices and student services counters." },
+      { name: "Hostel Zone", slug: "hostel-zone", kind: "LANDMARK", x: 700, y: 560, label: "Hostels", description: "Residential hostel cluster (boys/girls blocks)." },
+      { name: "Food Court", slug: "food-court", kind: "FACILITY", x: 340, y: 600, label: "Food", description: "Campus dining court and kiosks." },
+      { name: "Sports Complex", slug: "sports-complex", kind: "FACILITY", x: 620, y: 680, label: "Sports", description: "Indoor/outdoor sports and wellness facilities." },
+      { name: "Media & Arts", slug: "media-arts", kind: "BUILDING", x: 180, y: 620, label: "Media / Arts", description: "Media, communication, and arts studios." },
+      { name: "Life Sciences", slug: "life-sciences", kind: "BUILDING", x: 680, y: 360, label: "SLSB", description: "Life science and biotechnology block." },
+      { name: "Health Sciences", slug: "health-sciences", kind: "BUILDING", x: 780, y: 440, label: "SHMS", description: "Health and medical sciences facilities." },
+      { name: "Agriculture Hub", slug: "agri-hub", kind: "BUILDING", x: 820, y: 280, label: "SSA", description: "Smart agriculture teaching and demo plots area." },
+      { name: "Innovation Hub", slug: "innovation-hub", kind: "FACILITY", x: 500, y: 400, label: "Innovation", description: "Maker space / incubation and project demos." },
+      { name: "Computing Labs Wing", slug: "computing-labs", kind: "FACILITY", x: 480, y: 300, label: "Labs", description: "Shared computing and electronics labs near SOET." },
+      { name: "Education Block", slug: "education-block", kind: "BUILDING", x: 150, y: 480, label: "SOE", description: "School of Education classrooms." },
+    ].map((n) => {
+      const { lat, lng } = approxLatLng(n.x, n.y);
+      return prisma.campusNode.create({ data: { ...n, lat, lng } });
+    })
   );
 
   const bySlug = Object.fromEntries(nodes.map((n) => [n.slug, n]));
@@ -128,10 +146,15 @@ async function main() {
     ["central-plaza", "business-law", 1],
     ["central-plaza", "food-court", 1],
     ["central-plaza", "media-arts", 1.3],
+    ["central-plaza", "education-block", 0.9],
     ["library-node", "soet-block", 0.8],
     ["library-node", "innovation-hub", 0.7],
     ["soet-block", "science-block", 1],
     ["soet-block", "innovation-hub", 0.8],
+    ["soet-block", "computing-labs", 0.5],
+    ["soet-block", "north-walk", 0.7],
+    ["computing-labs", "north-walk", 0.6],
+    ["science-block", "north-walk", 0.6],
     ["science-block", "life-sciences", 1],
     ["science-block", "agri-hub", 1.2],
     ["business-law", "food-court", 0.9],
@@ -140,9 +163,12 @@ async function main() {
     ["food-court", "media-arts", 1],
     ["hostel-zone", "sports-complex", 1],
     ["hostel-zone", "health-sciences", 1],
+    ["hostel-zone", "east-gate", 1.1],
     ["life-sciences", "health-sciences", 1],
     ["life-sciences", "agri-hub", 1],
+    ["health-sciences", "east-gate", 1],
     ["innovation-hub", "business-law", 0.9],
+    ["admin-block", "education-block", 0.8],
   ];
 
   for (const [a, b, w] of edgePairs) {
@@ -262,8 +288,10 @@ async function main() {
     schoolRecords.push(
       await prisma.school.create({
         data: {
-          ...s,
-          description: `${s.name} at Adamas University.`,
+          name: s.name,
+          slug: s.slug,
+          shortName: s.shortName,
+          description: s.blurb,
           universityId: uni.id,
           ...OFFICIAL,
           confidence: 0.95,
@@ -298,6 +326,52 @@ async function main() {
       confidence: 0.9,
     },
   });
+
+
+  // Departments & programmes across all 10 schools (dense Academic Universe)
+  const schoolBySlug = Object.fromEntries(schoolRecords.map((s) => [s.slug, s]));
+  const DEPT_SEED: { school: string; name: string; slug: string; prog: string; progSlug: string; degree: string }[] = [
+    { school: "sbas", name: "Department of Physics", slug: "physics", prog: "B.Sc. Physics (Hons)", progSlug: "bsc-physics", degree: "B.Sc." },
+    { school: "sbas", name: "Department of Chemistry", slug: "chemistry", prog: "B.Sc. Chemistry (Hons)", progSlug: "bsc-chemistry", degree: "B.Sc." },
+    { school: "slacs", name: "Department of English", slug: "english", prog: "B.A. English (Hons)", progSlug: "ba-english", degree: "B.A." },
+    { school: "slacs", name: "Department of Sociology", slug: "sociology", prog: "B.A. Sociology", progSlug: "ba-sociology", degree: "B.A." },
+    { school: "sob", name: "Department of Management", slug: "management", prog: "BBA", progSlug: "bba", degree: "BBA" },
+    { school: "sob", name: "Department of Commerce", slug: "commerce", prog: "B.Com (Hons)", progSlug: "bcom-hons", degree: "B.Com" },
+    { school: "solj", name: "Department of Law", slug: "law", prog: "B.A. LL.B.", progSlug: "ba-llb", degree: "B.A. LL.B." },
+    { school: "somc", name: "Department of Journalism", slug: "journalism", prog: "B.A. Journalism & Mass Communication", progSlug: "ba-jmc", degree: "B.A." },
+    { school: "soe", name: "Department of Education", slug: "education", prog: "B.Ed.", progSlug: "bed", degree: "B.Ed." },
+    { school: "slsb", name: "Department of Biotechnology", slug: "biotechnology", prog: "B.Sc. Biotechnology", progSlug: "bsc-biotech", degree: "B.Sc." },
+    { school: "shms", name: "Department of Allied Health", slug: "allied-health", prog: "B.Sc. Allied Health Sciences", progSlug: "bsc-allied-health", degree: "B.Sc." },
+    { school: "ssa", name: "Department of Agriculture", slug: "agriculture", prog: "B.Sc. (Hons) Agriculture", progSlug: "bsc-agriculture", degree: "B.Sc." },
+    { school: "soet", name: "Department of Electronics", slug: "ece", prog: "B.Tech ECE", progSlug: "btech-ece", degree: "B.Tech" },
+  ];
+  for (const d of DEPT_SEED) {
+    const school = schoolBySlug[d.school];
+    if (!school) continue;
+    const dept = await prisma.department.create({
+      data: {
+        name: d.name,
+        slug: d.slug,
+        schoolId: school.id,
+        description: `${d.name} — programmes and teaching under ${school.shortName || school.name}.`,
+        ...OFFICIAL,
+        confidence: 0.85,
+      },
+    });
+    await prisma.programme.create({
+      data: {
+        name: d.prog,
+        slug: d.progSlug,
+        degree: d.degree,
+        duration: d.degree.startsWith("B.Tech") || d.degree.includes("LL.B") ? "4–5 years" : "3–4 years",
+        schoolId: school.id,
+        departmentId: dept.id,
+        description: `${d.prog} at Adamas University (${school.shortName}). Verify current intake on the official site.`,
+        ...OFFICIAL,
+        confidence: 0.8,
+      },
+    });
+  }
 
   // Leadership — sourced
   await prisma.person.create({
@@ -526,7 +600,7 @@ async function main() {
       data: {
         ...c,
         universityId: uni.id,
-        meetingInfo: "Check Events for upcoming sessions.",
+        meetingInfo: `Weekly meetups — see Events · typically evenings near Innovation Hub / Central Plaza (${c.category}).`,
         sourceType: "USER",
         sourceTitle: "CampusOS club directory (campus community listing)",
         confidence: 0.75,
@@ -838,6 +912,153 @@ async function main() {
       confidence: 0.9,
       status: "VERIFIED",
     },
+  });
+
+
+  await prisma.event.create({
+    data: {
+      title: "DEMO · Nature Nurturers campus clean-up",
+      slug: "nature-cleanup-demo",
+      description: "Demo-labelled volunteer clean-up around the plaza and hostel green belt. Date illustrative — confirm with club coordinators.",
+      startAt: new Date("2026-09-25T07:30:00+05:30"),
+      endAt: new Date("2026-09-25T10:00:00+05:30"),
+      location: "Central Plaza",
+      venueNodeId: bySlug["central-plaza"].id,
+      clubId: (await prisma.club.findUniqueOrThrow({ where: { slug: "nature-nurturers" } })).id,
+      universityId: uni.id,
+      sourceType: "USER",
+      sourceTitle: "CampusOS demo event (not an official calendar entry)",
+      confidence: 0.55,
+      status: "UNVERIFIED",
+    },
+  });
+  await prisma.event.create({
+    data: {
+      title: "DEMO · Cy-Coder's hack night",
+      slug: "cycoders-hack-night",
+      description: "Demo-labelled overnight coding session for open-source and contest prep.",
+      startAt: new Date("2026-10-03T18:00:00+05:30"),
+      endAt: new Date("2026-10-04T06:00:00+05:30"),
+      location: "Computing Labs Wing",
+      venueNodeId: bySlug["computing-labs"].id,
+      clubId: (await prisma.club.findUniqueOrThrow({ where: { slug: "cy-coders" } })).id,
+      universityId: uni.id,
+      sourceType: "USER",
+      sourceTitle: "CampusOS demo event",
+      confidence: 0.55,
+      status: "UNVERIFIED",
+    },
+  });
+
+  await prisma.notice.create({
+    data: {
+      title: "Hostel mess menu rotation (demo)",
+      slug: "hostel-mess-demo",
+      body: "Hostel mess will publish a weekly menu on notice boards. This CampusOS entry is a demo placeholder — confirm with hostel administration for official timings and menus.",
+      category: "HOSTEL",
+      universityId: uni.id,
+      sourceType: "USER",
+      sourceTitle: "CampusOS demo notice",
+      confidence: 0.5,
+      status: "UNVERIFIED",
+    },
+  });
+  await prisma.notice.create({
+    data: {
+      title: "What changed? ID card desk relocated",
+      slug: "id-desk-move",
+      body: "ID card services now operate from Admin Block reception counter 2 (weekdays). Bring a government photo ID for replacements.",
+      previousBody: "ID card services operated from a temporary desk near Main Gate.",
+      changeSummary: "Service desk moved from Main Gate temporary counter to Admin Block reception.",
+      category: "SERVICES",
+      universityId: uni.id,
+      sourceType: "USER",
+      confidence: 0.65,
+      status: "UNVERIFIED",
+    },
+  });
+
+  await prisma.facility.create({
+    data: {
+      name: "Innovation Hub Maker Space",
+      slug: "facility-innovation",
+      type: "OTHER",
+      description: "Prototyping benches, project demos, and club showcases.",
+      hours: "Weekdays 10:00–19:00",
+      universityId: uni.id,
+      nodeId: bySlug["innovation-hub"].id,
+      sourceType: "USER",
+      confidence: 0.7,
+      status: "UNVERIFIED",
+    },
+  });
+  await prisma.facility.create({
+    data: {
+      name: "Campus Medical Desk",
+      slug: "facility-medical",
+      type: "MEDICAL",
+      description: "First-aid and campus medical desk near Health Sciences. No phone numbers invented here — visit in person or ask Admin.",
+      hours: "Weekdays 9:00–17:00",
+      universityId: uni.id,
+      nodeId: bySlug["health-sciences"].id,
+      sourceType: "USER",
+      confidence: 0.65,
+      status: "UNVERIFIED",
+    },
+  });
+
+  await prisma.researchCenter.create({
+    data: {
+      name: "Sustainable Agriculture Lab Network",
+      slug: "agri-lab-net",
+      description: "Demo listing for agri-tech trials and student projects under SSA.",
+      focus: "Smart agriculture, soil sensing, sustainable practices",
+      universityId: uni.id,
+      sourceType: "USER",
+      confidence: 0.55,
+      status: "UNVERIFIED",
+    },
+  });
+
+  await prisma.service.createMany({
+    data: [
+      {
+        name: "Hostel Allocation Query",
+        slug: "hostel-allocation",
+        category: "Housing",
+        description: "Room allotment status and hostel office guidance for new and continuing residents.",
+        howToAccess: "Hostel Zone office · bring admission documents.",
+        hours: "Weekdays 10:00–16:00",
+        universityId: uni.id,
+        sourceType: "USER",
+        confidence: 0.6,
+        status: "UNVERIFIED",
+      },
+      {
+        name: "Library Membership & Access",
+        slug: "library-access",
+        category: "Academics",
+        description: "Activate borrowing privileges and digital resource access with student ID.",
+        howToAccess: "Central Library circulation desk.",
+        hours: "Weekdays 9:00–20:00",
+        universityId: uni.id,
+        sourceType: "USER",
+        confidence: 0.7,
+        status: "UNVERIFIED",
+      },
+      {
+        name: "Sports Facility Booking",
+        slug: "sports-booking",
+        category: "Wellness",
+        description: "Request indoor court / turf slots subject to maintenance windows (see Campus Pulse).",
+        howToAccess: "Sports Complex office.",
+        hours: "Weekdays 8:00–18:00",
+        universityId: uni.id,
+        sourceType: "USER",
+        confidence: 0.6,
+        status: "UNVERIFIED",
+      },
+    ],
   });
 
   await prisma.pulseStatus.createMany({

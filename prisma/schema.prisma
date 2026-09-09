@@ -410,8 +410,10 @@ model CampusNode {
   name        String
   slug        String   @unique
   kind        String   // BUILDING | GATE | JUNCTION | FACILITY | LANDMARK
-  x           Float    // relative SVG coordinates (0-1000)
+  x           Float    // relative layout coordinates (0-1000) for schematic/admin
   y           Float
+  lat         Float?   // approximate overlay latitude — NOT official survey GPS
+  lng         Float?   // approximate overlay longitude — NOT official survey GPS
   label       String?
   description String?
   createdAt   DateTime @default(now())
