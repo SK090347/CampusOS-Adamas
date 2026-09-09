@@ -121,3 +121,7 @@ Built as a portfolio-grade campus OS: geospatial UX + institutional knowledge + 
 ## License
 
 MIT
+
+## License
+
+Dual-licensed under [MIT](./LICENSE) and [Apache-2.0](./LICENSE-APACHE). See [NOTICE](./NOTICE).

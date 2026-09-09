@@ -44,5 +44,6 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
-  }
+  },
+  "license": "(MIT OR Apache-2.0)"
 }
