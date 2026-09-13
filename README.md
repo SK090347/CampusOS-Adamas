@@ -4,7 +4,7 @@
 
 <h1 align="center">CampusOS — Adamas University</h1>
 
-<p align="center"><strong>Everything around your university, one intelligent operating layer.</strong></p>
+<p align="center"><strong>Campus maps, academics, and day-to-day student flows in one app.</strong></p>
 
 <p align="center">
   SEARCH → UNDERSTAND → NAVIGATE → ACT
@@ -18,9 +18,9 @@
 </p>
 
 <p align="center">
-  A production-quality digital <em>operating system</em> for
+  A campus app for
   <a href="https://adamasuniversity.ac.in/">Adamas University</a> /
-  Adamas Knowledge City — not a generic college dashboard.
+  Adamas Knowledge City — built specifically for Adamas.
 </p>
 
 ---
