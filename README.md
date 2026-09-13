@@ -7,7 +7,7 @@
 <p align="center"><strong>Campus maps, academics, and day-to-day student flows in one app.</strong></p>
 
 <p align="center">
-  SEARCH → UNDERSTAND → NAVIGATE → ACT
+  search · map · navigate · act
 </p>
 
 <p align="center">
@@ -57,7 +57,7 @@ CampusOS is the app a modern university student opens in the morning:
 
 - Palette: deep **ink** + warm campus **gold/cream**
 - Type: **Fraunces** (display) + **DM Sans** (UI)
-- Feels like a premium campus mobility product — not Bootstrap CRUD
+- Palette: ink + warm gold/cream; Fraunces + DM Sans
 
 ## Knowledge integrity
 
@@ -116,7 +116,7 @@ See **[Releases](https://github.com/SK090347/CampusOS-Adamas/releases)** for ver
 
 **Sumit Kumar Ta** · [@SK090347](https://github.com/SK090347)
 
-Built as a portfolio-grade campus OS: geospatial UX + institutional knowledge + product design.
+Map + routes, structured campus knowledge, admin CMS — built for Adamas.
 
 ## License
 
